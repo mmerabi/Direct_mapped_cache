@@ -4,7 +4,6 @@
 //Michael Merabi Project #2
 //Cache Memory in C
 
-
 	int mainmemsize = 0;
 	int cachesize = 0;
 	int blocksize = 0;
@@ -23,8 +22,13 @@ typedef struct node n;
 void startup(){ //the starting display
     printf( "\nProgram Written by Michael Merabi2 \n");
     printf( "Prog 2 - Cache Simulation \n");
-    printf( "Class Meeting Time: 8:00 - 9:15 \n");
-    printf( "1) Comp 222 - Fall 2018 \n");
+    printf( "Class Meeting Time: 8:00 - 9:15 \n\n\n");
+    printf( "Main Menu - Main Memory to Cache Memory Mapping \n");
+    printf( "----------------------------- \n");
+    printf( "1) Enter Configuration Parameters \n");
+    printf( "2) Read from cache \n");
+    printf( "3) Write to cache \n");
+    printf( "4) Exit  \n");
 }
 
 
@@ -50,14 +54,14 @@ void collisionreplace(int linenum, int tagnum, int memoryaddress){
 }
 
 void config(){
-	printf("\n Enter main memory size (words): ");
-	fscanf(test, "%d", mainmemsize);
+	fscanf(test, "%d", &mainmemsize);
+	printf("\n Enter main memory size (words): ""%d",mainmemsize);
 
-	printf("\n Enter cache size (words): ");
-	fscanf(test, "%d", cachesize);
-
-	printf("\n Enter block size (words/block): ");
-	fscanf(test, "%d", blocksize);
+	fscanf(test, "%d", &cachesize);
+	printf("\n Enter cache size (words): ""%d",cachesize);
+	
+	fscanf(test, "%d", &blocksize);
+	printf("\n Enter block size (words/block): ""%d",blocksize);
 
 
 	//Error Checks happen here
@@ -104,7 +108,7 @@ void config(){
 	int k;
 	for (k = 0; k < numblines; k++){
 		for (i = 0; i < blocksize; i++){
-			cache[j].block[i] = NULL;
+			cache[k].block[i] = NULL;
 		}
 	}
 
@@ -120,20 +124,19 @@ void writecache(){
 	int value = 0;
 	int address = 0;
 	int addressbuffer = 0;
-	int addresssub = 0;
 	int tagbuffer = 0;
 	int line = 0;
 	int wordbuffer = 0;
 
-	printf("\n Enter Main memory address to write to: ");
 	fscanf(test, "%d", &address);
+	printf("\n Enter Main memory address to write to: ""%d",address);
 	if(address > (mainmemsize - 1)){
 		printf("\nError: Address value is bigger than main memory size");
 		return;
 	}
 
-	printf("\n Enter the Values: ");
-	fscanf(test, "%d", value);
+	fscanf(test, "%d", &value);
+	printf("\n Enter the Values: ""%d", value);
 	mainmem[address] = value;
 
 	
@@ -142,30 +145,99 @@ void writecache(){
 	addressbuffer = ((address / blocksize)*blocksize); //starting number for block
 	wordbuffer = (address - addressbuffer); // word calculation
 
+	if(cache[line].tag != tagbuffer){
+        printf("\n***Write Miss, load block from memory");
+        cache[line].tag = tagbuffer;
+        int j;
+        for(j =0; j < blocksize; j++){
+            cache[line].block[j] = mainmem[addressbuffer+j];
+        }
+    }
+    else {
+        cache[line].block[wordbuffer] = value;
+    }
 }
+
+void readcache(){
+	int line;
+	int wordbuffer;
+	int address;
+	int value;
+	int	addressbuffer;
+	int i = 0;
+	int readmem = 0;
+	int readline = 0;
+	int readtag = 0;
+	int tagbuffer = 0;
+
+	fscanf(test, "%d",&address);
+	printf("\nEnter the memory address to read from: ""%d",address);
+
+	if(address > (mainmemsize - 1)){
+		printf("\nError: Address value is bigger than main memory size");
+		return;
+	}
+
+	readline = (readmem%cachesize) / blocksize;
+	readtag = (readmem / cachesize);
+
+	if(readtag == 0){
+		for (i = 0; i < blocksize; i++){
+			if (!(cache[0].block[i] == 0)) {
+
+			}
+		}
+	}
+
+	tagbuffer = (address / cachesize); //tag buffer to check cache to see if memory is stored
+	line = ((address%cachesize) / blocksize); //line calculation
+	addressbuffer = ((address / blocksize)*blocksize); //starting number for block
+	wordbuffer = (address - addressbuffer); // word calculation
+
+	if(cache[line].tag != tagbuffer){
+        cache[line].tag = tagbuffer;
+        int j;
+        for(j =0; j < blocksize; j++){
+            cache[line].block[j] = mainmem[addressbuffer+j];
+        }
+    }
+    else {
+       value = cache[line].block[wordbuffer];
+    }
+    printf("\n\n***Word %i of cache line %i with tag %i contains the Value %i\n\n", wordbuffer, line, tagbuffer, value);
+    return;
+}
+
 
 int main(void){
 	int input;
 	test = fopen("prog2_test_data.txt", "r");
 
 	while(input != 4){ // loop to ensure user can run unless program is exited
-        scanf(test, "%d", &input);
+        fscanf(test, "%d", &input);
         
         if(input == 1){
             startup();
+            printf("\n***Starting to Read Data from the input file: prog2_test_data.txt\n");
             config(); 
+            printf("\n***All Input Parameters Accepted. Starting to Process Write/Read Requests\n");
             //take input of cache, mainmem and block sizes and then construct simulated cache
         }
         
-        if (input == 2){ // calculate answers
-            startup();
+        if (input == 2){ // read cache
+        	startup();
+        	readcache();
         }
 
-        if(input == 3) { //
-        startup();
+        if(input == 3) { // write cache
+        	startup();
+        	writecache();
     	}
+    	if (input == 4){
+    		printf("\nMemory Freed Up - Program Terminated Normally\n");
+    		return 0;
 
+    	}
     }
-
  }
 	
