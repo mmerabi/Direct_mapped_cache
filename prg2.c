@@ -111,7 +111,6 @@ void config(){
 			cache[k].block[i] = NULL;
 		}
 	}
-
 	int m;
 	for (m = 0; m < numblines; m++){
 		cache[m].tag = NULL;
@@ -152,8 +151,7 @@ void writecache(){
         for(j =0; j < blocksize; j++){
             cache[line].block[j] = mainmem[addressbuffer+j];
         }
-    }
-    else {
+    } else {
         cache[line].block[wordbuffer] = value;
     }
 }
@@ -188,13 +186,13 @@ void readcache(){
 			}
 		}
 	}
-
 	tagbuffer = (address / cachesize); //tag buffer to check cache to see if memory is stored
 	line = ((address%cachesize) / blocksize); //line calculation
 	addressbuffer = ((address / blocksize)*blocksize); //starting number for block
 	wordbuffer = (address - addressbuffer); // word calculation
 
 	if(cache[line].tag != tagbuffer){
+		printf("\n Read Miss... First Load Block from Memory!");
         cache[line].tag = tagbuffer;
         int j;
         for(j =0; j < blocksize; j++){
