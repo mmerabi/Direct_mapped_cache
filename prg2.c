@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//Michael Merabi Project #2
 //Cache Memory in C
 
 	int mainmemsize = 0;
@@ -20,9 +19,6 @@ struct node {
 typedef struct node n;
 
 void startup(){ //the starting display
-    printf( "\nProgram Written by Michael Merabi2 \n");
-    printf( "Prog 2 - Cache Simulation \n");
-    printf( "Class Meeting Time: 8:00 - 9:15 \n\n\n");
     printf( "Main Menu - Main Memory to Cache Memory Mapping \n");
     printf( "----------------------------- \n");
     printf( "1) Enter Configuration Parameters \n");
